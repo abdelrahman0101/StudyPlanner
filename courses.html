@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+body{
+	font-family: sans;
+}
+
+.course{
+	border: 1px solid darkgray;
+	text-align: center;
+	padding: 5px;
+    transition-property: background-color;
+    transition-duration: 1s;
+    cursor: pointer;
+    
+}
+
+.course:hover{
+    opacity: 0.8;
+    /*text-shadow: 0px 0px 3px #FFF;*/
+}
+
+.header {
+	text-align: center;
+	border: 1px solid black;
+	background-color: #777;
+	color: white;
+	font-weight: bold;
+	text-shadow: 0px 1px 2px black;
+}
+
+
+
+.prev{
+    background-color: #CCBBFF;
+}
+
+.direct {
+    background-color: lightBlue;
+}
+
+.selected{
+    background-color: #A0DDA0;
+    
+}
+
+.next {
+	background-color: #FFEEAA;
+}
+
+
+h2 {
+    text-align: center;
+    font-family:serif;
+}
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+
+<script>
+
+    var selected = [];
+
+var dependency = {
+	GEN102 : [], //English
+	GEN103 : [], //Math 1
+	GEN108 : [], //Physics 1
+	ITF101 : [], //Intro to IT
+	SWE101 : [], //Programming 1
+	CAS101 : [], //Intro to Computers
+	
+	//semester 2:
+	
+	GEN101 : [],
+	GEN104 : ["GEN103"], //math 2
+	GEN105 : ["GEN103"], //probability
+	GEN109 : ["GEN108"], //Physics 2
+	GEN112 : [], //Creative Thinking
+	SWE102 : ["SWE101"], //Programming 2
+	NWE101 : ["ITF101"], //Intro to web
+	
+	//semester 3:
+	
+	GEN213 : ["GEN101", "GEN102", "CAS101"], //report writing
+	GEN206 : ["GEN103"], //discrete
+	GEN210 : ["GEN109"], //electronics
+	GEN211 : ["GEN105"], //systems & OR
+	SWE203 : ["SWE102"], //Prog. 3
+	CAS205 : ["CAS101"], //Automata
+	
+	//semester 4:
+	
+	GEN207 : ["GEN104"],  //numerical
+	GEN214 : ["ITF101"], //economy
+	GEN216 : [], //human rights
+	SWE206 : ["SWE203"], //algorithms
+	SWE204 : ["SWE203"], //SWE1
+	CAS202 : ["CAS205", "GEN210"], //CO1
+	CAS204 : ["CAS205", "SWE101"], //OS
+	
+	//semester 5:
+	
+	ITF302 : ["SWE206"], //DBS
+	CAS303 : ["CAS202"], //CO2
+	NWE302 : ["CAS202", "CAS204"], //Networks 1
+	SWE305 : ["SWE204"], //SWE2
+	HCI302 : ["SWE206"], //CG
+	ELC301 : ["GEN206", "CAS205"], //AI
+	
+	//semester 6:
+	
+	ITF303 : ["ITF302"], //Int. DB
+	ITF306 : ["CAS205"], //Language eng.
+	NWE303 : ["NWE302"], //NW2
+	NWE304 : ["NWE302"], //Web Eng. 1
+	GEN315 : ["CAS101", "ITF101", "NWE101"], //Info. ethics
+	ELC302 : ["CAS202"], //Microprocessors
+	
+	//semester 7:
+	
+	HCI401 : ["HCI302"], //HCI
+	CAS406 : ["GEN211", "CAS303"], //Modeling
+	HCI403 : ["HCI302"], //Multimedia
+	NWE405 : ["NWE304"], // Web Eng. 2
+	PRO401 : [],	// Project 1
+	HCI404 : ["HCI302"], //3D Graphics
+	
+	//semester 8:
+	
+	NWE407 : ["NWE303"],
+	ITF404 : ["NWE303", "NWE405"],
+	ITF405 : ["ITF303"],
+	NWE406 : ["NWE405"], //Web Eng. 3
+	PRO402 : ["PRO401"], //Project 2
+	ELC404 : ["CAS205", "GEN211"] //Neural Networks
+	
+
+}
+
+$(function () {
+    
+
+    $(".course").click(function () {
+        $(".course").removeClass("prev");
+        $(".course").removeClass("direct");
+        $(".course").removeClass("selected");
+		$(".course").removeClass("next");
+
+    //    if($(this).hasClass("selected")){
+    //        $(this).removeClass("selected");
+    //    }
+    //    else
+    //    {
+            
+        //}
+        markDependency(this.id, 0);
+		markNext(this.id);
+    });
+
+
+    function markDependency(start, level) {
+        switch (level)
+        {
+            case 0:
+                $("#" + start).addClass("selected");
+                break;
+            case 1:
+                $("#" + start).addClass("direct");
+                break;
+            default:
+                $("#" + start).addClass("prev");
+                break;
+        }
+        
+        for(var i = 0; i < dependency[start].length; i++)
+        {
+            markDependency(dependency[start][i], level + 1);
+        }
+    }
+
+
+	function markNext(start){
+		for(course in dependency){
+			for (var dep = 0; dep < dependency[course].length; dep++)
+			{
+				if (dependency[course][dep] == start)
+				{
+					$("#" + course).addClass("next");
+				}
+			}
+		}
+	}
+
+
+});
+
+</script>
+</head>
+<body>
+    <h2>Information Technology Courses</h2>
+<table>
+	<!--<tr>
+		<th>Semester 1</th>
+		<th>Semester 2</th>
+		<th>Semester 3</th>
+		<th>Semester 4</th>
+		<th>Semester 5</th>
+		<th>Semester 6</th>
+		<th>Semester 7</th>
+		<th>Semester 8</th>
+	</tr>-->
+	<tr>
+		<td class="header">Semester 1</td>
+		<td class="course" id="GEN102">English Language</td>
+		<td class="course" id="GEN103">Mathematics (1)</td>
+		<td class="course" id="GEN108">Physics (1)</td>
+		<td class="course" id="ITF101">Introduction to Information Technology</td>
+		<td class="course" id="SWE101">Programming Techniques (1)</td>
+		<td class="course" id="CAS101">Introduction to Computers</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="header">Semester 2</td>
+		<td class="course" id="GEN101">Arabic language</td>
+		<td class="course" id="GEN104">Mathematics (2)</td>
+		
+		<td class="course" id="GEN109">Physics (2)</td>
+		<td class="course" id="GEN105">Probability and Statistics</td>
+		<td class="course" id="SWE102">Programming Techniques (2)</td>
+		<td class="course" id="NWE101">Introduction to Web Technology</td>
+		<td class="course" id="GEN112">Creative and Sceintific Thinking</td>
+	</tr>
+	<tr>
+		<td class="header">Semester 3</td>
+		<td class="course" id="GEN213">Report Writing and Presentation Skills</td>
+		
+		<td class="course" id="GEN206">Discrete Mathematics</td>
+		<td class="course" id="GEN210">Electronics</td>
+		<td class="course" id="CAS205">Automata Models</td>
+        <td class="course" id="SWE203">Programming Techniques (3)</td>
+		<td class="course" id="GEN211">Systems and Operations Research</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="header">Semester 4</td>
+		<td class="course" id="SWE206">Algorithms and Data Structures</td>
+		<td class="course" id="CAS202">Computer Organization (1)</td>
+		<td class="course" id="GEN207">Numerical Methods</td>
+		<td class="course" id="SWE204">Software Engineering (1)</td>
+		<td class="course" id="CAS204">Operating Systems</td>
+		<td class="course" id="GEN214">Information Economy</td>
+		<td class="course" id="GEN216">Human Rights and Ethics</td>
+	</tr>
+	<tr>
+		<td class="header">Semester 5</td>
+		<td class="course" id="ITF302">Database Systems</td>
+		<td class="course" id="CAS303">Computer Organization (2)</td>
+		<td class="course" id="NWE302">Computer Networks (1)</td>
+		<td class="course" id="SWE305">Software Engineering (2)</td>
+		<td class="course" id="HCI302">Computer Graphics</td>
+		<td class="course" id="ELC301">Elective (1) - Artificial Intelligence</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="header">Semester 6</td>
+		<td class="course" id="ITF303">Intelligent Databases</td>
+		<td class="course" id="ITF306">Language Engineering</td>
+		<td class="course" id="NWE303">Computer Networks (2)</td>
+		<td class="course" id="NWE304">Web Engineering (1)</td>
+		<td class="course" id="GEN315">Information Ethics</td>
+		<td class="course" id="ELC302">Elective (2) - Microprocessors and Interfacing</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="header">Semester 7</td>
+		<td class="course" id="HCI401">Human Computer Interaction</td>
+		<td class="course" id="CAS406">Modeling and Simulation</td>
+		<td class="course" id="HCI403">Multimedia and Virtual Reality</td>
+		<td class="course" id="NWE405">Web Engineering (2)</td>
+		<td class="course" id="PRO401">Project (1)</td>
+		<td class="course" id="HCI404">Elective (3) - Three-dimensional Graphics</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td class="header">Semester 8</td>
+		<td class="course" id="NWE407">Mobile and Sensor Networks</td>
+		<td class="course" id="ITF404">Information Assurance and Security</td>
+		<td class="course" id="ITF405">Integrated Information Sysrems</td>
+		<td class="course" id="NWE406">Web Engineering (3)</td>
+		<td class="course" id="PRO402">Project (2)</td>
+		<td class="course" id="ELC404">Elective (4) - Neural Networks</td>
+		<td></td>
+	</tr>
+</table>
+<br>
+<table >
+	<tr><td class="selected" style="width:30px"></td> <td>Selected course</td></tr>
+	<tr><td class="direct" style="width:30px"></td> <td>Direct prerequisite</td></tr>
+	<tr><td class="prev" style="width:30px"></td> <td>Indirect prerequisite</td></tr>
+	<tr><td class="next" style="width:30px"></td> <td>Next courses</td></tr>
+</table>
+</body>
+</html>
