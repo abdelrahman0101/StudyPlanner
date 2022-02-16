@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+
+        body {
+            font-family: sans;
+        }
+
+        .course {
+            border: 1px solid darkgray;
+            text-align: center;
+            padding: 5px;
+            transition-property: background-color;
+            transition-duration: 1s;
+            cursor: pointer;
+
+        }
+
+        .course:hover {
+            opacity: 0.8;
+            /*text-shadow: 0px 0px 3px #FFF;*/
+        }
+
+        .header {
+            text-align: center;
+            border: 1px solid black;
+            background-color: #777;
+            color: white;
+            font-weight: bold;
+            text-shadow: 0px 1px 2px black;
+        }
+
+
+		.prev{
+			background-color: #CCBBFF;
+		}
+
+		.direct {
+			background-color: lightBlue;
+		}
+
+		.selected{
+			background-color: #A0DDA0;
+			
+		}
+
+		.next {
+			background-color: #FFEEAA;
+		}
+
+
+        h2 {
+            text-align: center;
+            font-family: serif;
+        }
+
+        input{
+            margin-top: 7px;
+        }
+		
+		
+		.switch {
+		  position: relative;
+		  display: inline-block;
+		  line-height: 24px;
+		  margin-bottom: 10px;
+		  width: 48px;
+		  height: 24px;
+		}
+
+		.switch input { 
+		  opacity: 0;
+		  width: 0;
+		  height: 0;
+		}
+
+		.slider {
+		  position: absolute;
+		  cursor: pointer;
+		  top: 0;
+		  left: 0;
+		  right: 0;
+		  bottom: 0;
+		  background-color: #ccc;
+		  border-radius: 24px;
+		  transition: .4s;
+		}
+
+		.slider:before {
+		  position: absolute;
+		  content: "";
+		  height: 16px;
+		  width: 16px;
+		  left: 4px;
+		  bottom: 4px;
+		  background-color: white;
+		  transition: .4s;
+		  border-radius: 50%;
+		}
+
+		input:checked + .slider {
+		  background-color: #2196F3;
+		}
+
+		input:focus + .slider {
+		  box-shadow: 0 0 1px #2196F3;
+		}
+
+		input:checked + .slider:before {
+		  transform: translateX(24px);
+		}
+		
+		#div_sel{
+			color: dark-gray;
+			margin: 10px;
+		}
+		
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+	$(function () {
+    var courses = {
+        GEN102: {
+            name: "English Language",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        },
+        GEN103: {
+            name: "Mathematics (1)",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        },
+        GEN108: {
+            name: "Physics (1)",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        },
+        ITF101: {
+            name: "Introduction to Information Technology",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        }
+        ,
+        SWE101: {
+            name: "Programming Techniques (1)",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        }
+        ,
+        CAS101: {
+            name: "Introduction to Computers",
+            semester: 1,
+            prerequisites: [],
+            hours: 3,
+        }
+        ,
+        GEN101: {
+            name: "Arabic Language",
+            semester: 2,
+            prerequisites: [],
+            hours: 2,
+        }
+        ,
+        GEN104: {
+            name: "Mathematics (2)",
+            semester: 2,
+            prerequisites: ["GEN103"],
+            hours: 3,
+        }
+        ,
+        GEN105: {
+            name: "Probability and Statistics",
+            semester: 2,
+            prerequisites: ["GEN103"],
+            hours: 3,
+        }
+        ,
+        GEN109: {
+            name: "Physics (2)",
+            semester: 2,
+            prerequisites: ["GEN108"],
+            hours: 3,
+        }
+        ,
+        GEN112: {
+            name: "Creative and Scientific Thinking",
+            semester: 2,
+            prerequisites: [],
+            hours: 3,
+        }
+        ,
+        SWE102: {
+            name: "Programming Techniques (2)",
+            semester: 2,
+            prerequisites: ["SWE101"],
+            hours: 3,
+        }
+        ,
+        NWE101: {
+            name: "Introduction to Web Technology",
+            semester: 2,
+            prerequisites: ["ITF101"],
+            hours: 3,
+        }
+        ,
+        GEN213: {
+            name: "Report Writing and Presentation Skills",
+            semester: 3,
+            prerequisites: ["GEN101", "GEN102", "CAS101"],
+            hours: 3,
+        }
+        ,
+        GEN206: {
+            name: "Discrete Mathematics",
+            semester: 3,
+            prerequisites: ["GEN103"],
+            hours: 3,
+        }
+        ,
+        GEN210: {
+            name: "Electronics",
+            semester: 3,
+            prerequisites: ["GEN109"],
+            hours: 3,
+        }
+        ,
+        GEN211: {
+            name: "Systems and Operations Research",
+            semester: 3,
+            prerequisites: ["GEN105"],
+            hours: 4,
+        }
+        ,
+        SWE203: {
+            name: "Programming Techniques (3)",
+            semester: 3,
+            prerequisites: ["SWE102"],
+            hours: 3,
+        }
+        ,
+        CAS205: {
+            name: "Automata Models",
+            semester: 3,
+            prerequisites: ["CAS101"],
+            hours: 3,
+        }
+        ,
+        GEN207: {
+            name: "Numerical Methods",
+            semester: 4,
+            prerequisites: ["GEN104"],
+            hours: 3,
+        }
+        ,
+        GEN214: {
+            name: "Information Economy",
+            semester: 4,
+            prerequisites: ["ITF101"],
+            hours: 2,
+        }
+        ,
+        GEN216: {
+            name: "Human Rights and Ethics",
+            semester: 4,
+            prerequisites: [],
+            hours: 2,
+        }
+        ,
+        SWE206: {
+            name: "Algorithms and Data Structures",
+            semester: 4,
+            prerequisites: ["SWE203"],
+            hours: 3,
+        }
+        ,
+        SWE204: {
+            name: "Software Engineering (1)",
+            semester: 4,
+            prerequisites: ["SWE203"],
+            hours: 3,
+        }
+        ,
+        CAS202: {
+            name: "Computer Organization (1)",
+            semester: 4,
+            prerequisites: ["CAS205", "GEN210"],
+            hours: 3,
+        }
+        ,
+        CAS204: {
+            name: "Operating Systems",
+            semester: 4,
+            prerequisites: ["CAS205", "SWE101"],
+            hours: 3,
+        }
+        ,
+        ITF302: {
+            name: "Database Systems",
+            semester: 5,
+            prerequisites: ["SWE206"],
+            hours: 3,
+        }
+        ,
+        CAS303: {
+            name: "Computer Organization (2)",
+            semester: 5,
+            prerequisites: ["CAS202"],
+            hours: 3,
+            summer: 1,
+        }
+        ,
+        NWE302: {
+            name: "Computer Networks (1)",
+            semester: 5,
+            prerequisites: ["CAS202", "CAS204"],
+            hours: 3,
+        }
+        ,
+        SWE305: {
+            name: "Software Engineering (2)",
+            semester: 5,
+            prerequisites: ["SWE204"],
+            hours: 3,
+        }
+        ,
+        HCI302: {
+            name: "Computer Graphics",
+            semester: 5,
+            prerequisites: ["SWE206"],
+            hours: 3,
+            summer: 4,
+        }
+        ,
+        ITF308: {
+            name: "Artificial Intelligence",
+            semester: 5,
+            prerequisites: ["GEN206", "CAS205"],
+            hours: 3,
+        }
+        ,
+        ITF303: {
+            name: "Intelligent Databases",
+            semester: 6,
+            prerequisites: ["ITF302"],
+            hours: 3,
+        }
+        ,
+        ITF306: {
+            name: "Language Engineering",
+            semester: 6,
+            prerequisites: ["CAS205"],
+            hours: 3,
+        }
+        ,
+        NWE303: {
+            name: "Computer Networks (2)",
+            semester: 6,
+            prerequisites: ["NWE302"],
+            hours: 3,
+        }
+        ,
+        NWE304: {
+            name: "Web Engineering (1)",
+            semester: 6,
+            prerequisites: ["NWE302"],
+            hours: 3,
+        }
+        ,
+        GEN315: {
+            name: "Information Ethics",
+            semester: 6,
+            prerequisites: ["CAS101", "ITF101", "NWE101"],
+            hours: 3,
+        }
+        ,
+        CAS308: { 
+            name: "Microprocessors and Interfacing",
+            semester: 6,
+            prerequisites: ["CAS202"],
+            hours: 3,
+        }
+        ,
+        HCI401: {
+            name: "Human Computer Interaction",
+            semester: 7,
+            prerequisites: ["HCI302"],
+            hours: 2,
+        }
+        ,
+        CAS406: {
+            name: "Modelling and Simulation",
+            semester: 7,
+            prerequisites: ["GEN211", "CAS303"],
+            hours: 3,
+            summer: 3,
+        }
+        ,
+        HCI403: {
+            name: "Multimedia and Virtual Reality",
+            semester: 7,
+            prerequisites: ["HCI302"],
+            hours: 4,
+        }
+        ,
+        NWE405: {
+            name: "Web Engineering (2)",
+            semester: 7,
+            prerequisites: ["NWE304"],
+            hours: 3,
+        }
+        ,
+        PRO401: {
+            name: "Graduation Project (1)",
+            semester: 7,
+            prerequisites: [],
+            hours: 3,
+        }
+        ,
+        HCI304: {
+            name: "Three-Dimensional Graphics",
+            semester: 7,
+            prerequisites: ["HCI302"],
+            hours: 3,
+            summer: 3,
+        }
+        ,
+        NWE407: {
+            name: "Mobile and Sensor Networks",
+            semester: 8,
+            prerequisites: ["NWE303"],
+            hours: 3,
+            summer: 3,
+        }
+        ,
+        ITF404: {
+            name: "Information Assurance and Security",
+            semester: 8,
+            prerequisites: ["NWE303", "NWE405"],
+            hours: 3,
+        }
+        ,
+        ITF405: {
+            name: "Integrated Information Systems",
+            semester: 8,
+            prerequisites: ["ITF303"],
+            hours: 3,
+        }
+        ,
+        NWE406: {
+            name: "Web Engineering (3)",
+            semester: 8,
+            prerequisites: ["NWE405"],
+            hours: 3,
+        }
+        ,
+        PRO402: {
+            name: "Graduation Project (2)",
+            semester: 8,
+            prerequisites: ["PRO401"],
+            hours: 3,
+        }
+        ,
+        ITF309: {
+            name: "Neural Networks",
+            semester: 8,
+            prerequisites: ["CAS205", "GEN211"],
+            hours: 3,
+        }
+    };
+
+    Object.keys(courses).forEach(function (c) {
+        var prerequisites = courses[c].prerequisites;
+        for(var pre of prerequisites)
+        {
+            if (!courses[pre].nextCourses)
+            {
+                courses[pre].nextCourses = [];
+            }
+            courses[pre].nextCourses.push(c);
+        }
+    });
+
+    var selected = [];
+
+    $(".course").click(function () {
+        var code = this.id;
+		if (!document.querySelector("#selectMulti").checked)
+		{
+			//multiple course selection is disabled
+			selected = [code];
+			$(".course").removeClass("prev");
+			$(".course").removeClass("direct");
+			$(".course").removeClass("selected");
+			$(".course").removeClass("next");
+			markDependency(code, 0);
+		}
+		else
+		{
+			if (selected.indexOf(code) > -1) //selected course; remove it
+			{
+				unselect(code);
+			}
+			else
+			{
+				select(code);
+			}
+		}
+		markNextCourses();
+        showSelected();
+    });
+
+	$("#selectMulti").click(function(){
+		selected = [];
+		$(".course").removeClass("prev");
+		$(".course").removeClass("direct");
+		$(".course").removeClass("selected");
+		$(".course").removeClass("next");
+		showSelected();
+		if (this.checked)
+		{
+			$("#legend tr:nth-child(2), #legend tr:nth-child(3)").hide();
+		}
+		else
+		{
+			$("#legend tr:nth-child(2), #legend tr:nth-child(3)").show();
+		}
+	});
+
+    function select(code) {
+        selected.push(code);
+        $("#" + code).addClass("selected");
+        for (var i = 0; i < courses[code].prerequisites.length; i++) {
+            var pre = courses[code].prerequisites[i];
+            if (selected.indexOf(pre) == -1) {
+                select(pre);
+            }
+        }
+    }
+
+    function unselect(code) {
+        selected.splice(selected.indexOf(code), 1);
+        $("#" + code).removeClass("selected");
+
+        if (!courses[code].nextCourses)
+            return;
+
+        for (var i = 0; i < courses[code].nextCourses.length; i++) {
+            var nxt = courses[code].nextCourses[i];
+            if (selected.indexOf(nxt) > -1) {
+                unselect(nxt);
+            }
+        }
+    }
+
+    function showSelected() {
+        var credits = 0;
+        for (var c of selected)
+        {
+            credits += courses[c].hours;
+        }
+        
+		//$("#div_sel").html("Selected credit hours: " + credits);
+    }
+	
+	function markDependency(start, level) {
+        switch (level)
+        {
+            case 0:
+                $("#" + start).addClass("selected");
+                break;
+            case 1:
+                $("#" + start).addClass("direct");
+                break;
+            default:
+                $("#" + start).addClass("prev");
+                break;
+        }
+        
+        for(var dep of courses[start].prerequisites)
+        {
+            markDependency(dep, level + 1);
+        }
+    }
+	
+	function markNextCourses()
+	{
+		$(".course").removeClass("next");
+		for (var s of selected)
+		{
+			if (!courses[s].nextCourses)
+				continue;
+			for (var next of courses[s].nextCourses)
+			{
+				if (selected.indexOf(next) == -1)
+					$("#" + next).addClass("next");
+			}
+		}
+	}
+});
+
+	</script>
+</head>
+<body>
+<h2>Information Technology Courses</h2>
+<table id="courses_table">
+    <tr>
+        <td class="header">Semester 1</td>
+        <td class="course" id="GEN102">English Language</td>
+        <td class="course" id="GEN103">Mathematics (1)</td>
+        <td class="course" id="GEN108">Physics (1)</td>
+        <td class="course" id="ITF101">Introduction to Information Technology</td>
+        <td class="course" id="SWE101">Programming Techniques (1)</td>
+        <td class="course" id="CAS101">Introduction to Computers</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="header">Semester 2</td>
+        <td class="course" id="GEN101">Arabic language</td>
+        <td class="course" id="GEN104">Mathematics (2)</td>
+        <td class="course" id="GEN109">Physics (2)</td>
+        <td class="course" id="GEN105">Probability and Statistics</td>
+        <td class="course" id="SWE102">Programming Techniques (2)</td>
+        <td class="course" id="NWE101">Introduction to Web Technology</td>
+        <td class="course" id="GEN112">Creative and Sceintific Thinking</td>
+    </tr>
+    <tr>
+        <td class="header">Semester 3</td>
+        <td class="course" id="GEN213">Report Writing and Presentation Skills</td>
+        <td class="course" id="GEN206">Discrete Mathematics</td>
+        <td class="course" id="GEN210">Electronics</td>
+        <td class="course" id="CAS205">Automata Models</td>
+        <td class="course" id="SWE203">Programming Techniques (3)</td>
+        <td class="course" id="GEN211">Systems and Operations Research</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="header">Semester 4</td>
+        <td class="course" id="SWE206">Algorithms and Data Structures</td>
+        <td class="course" id="CAS202">Computer Organization (1)</td>
+        <td class="course" id="GEN207">Numerical Methods</td>
+        <td class="course" id="SWE204">Software Engineering (1)</td>
+        <td class="course" id="CAS204">Operating Systems</td>
+        <td class="course" id="GEN214">Information Economy</td>
+        <td class="course" id="GEN216">Human Rights and Ethics</td>
+    </tr>
+    <tr>
+        <td class="header">Semester 5</td>
+        <td class="course" id="ITF302">Database Systems</td>
+        <td class="course" id="CAS303">Computer Organization (2)</td>
+        <td class="course" id="NWE302">Computer Networks (1)</td>
+        <td class="course" id="SWE305">Software Engineering (2)</td>
+        <td class="course" id="HCI302">Computer Graphics</td>
+        <td class="course" id="ITF308">Elective (1) - Artificial Intelligence</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="header">Semester 6</td>
+        <td class="course" id="ITF303">Intelligent Databases</td>
+        <td class="course" id="ITF306">Language Engineering</td>
+        <td class="course" id="NWE303">Computer Networks (2)</td>
+        <td class="course" id="NWE304">Web Engineering (1)</td>
+        <td class="course" id="GEN315">Information Ethics</td>
+        <td class="course" id="CAS308">Elective (2) - Microprocessors and Interfacing</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="header">Semester 7</td>
+        <td class="course" id="HCI401">Human Computer Interaction</td>
+        <td class="course" id="CAS406">Modeling and Simulation</td>
+        <td class="course" id="HCI403">Multimedia and Virtual Reality</td>
+        <td class="course" id="NWE405">Web Engineering (2)</td>
+        <td class="course" id="PRO401">Project (1)</td>
+        <td class="course" id="HCI304">Elective (3) - Three-dimensional Graphics</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td class="header">Semester 8</td>
+        <td class="course" id="NWE407">Mobile and Sensor Networks</td>
+        <td class="course" id="ITF404">Information Assurance and Security</td>
+        <td class="course" id="ITF405">Integrated Information Sysrems</td>
+        <td class="course" id="NWE406">Web Engineering (3)</td>
+        <td class="course" id="PRO402">Project (2)</td>
+        <td class="course" id="ITF309">Elective (4) - Neural Networks</td>
+        <td></td>
+    </tr>
+</table>
+<br>
+
+<table id="legend">
+	<tr><td class="selected" style="width:30px"></td> <td>Selected courses</td></tr>
+	<tr><td class="direct" style="width:30px"></td> <td>Direct prerequisite</td></tr>
+	<tr><td class="prev" style="width:30px"></td> <td>Indirect prerequisite</td></tr>
+	<tr><td class="next" style="width:30px"></td> <td>Next courses</td></tr>
+</table>
+<div id="div_sel"></div>
+<label class="switch">
+	<input id="selectMulti" type="checkbox">
+	<span class="slider"></span>
+</label>
+Select multiple courses
+</body>
+</html>
